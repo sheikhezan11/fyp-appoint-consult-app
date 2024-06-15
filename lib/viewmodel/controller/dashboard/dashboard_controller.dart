@@ -17,7 +17,7 @@ class DashboardController extends GetxController{
 RxInt selectedIndex = 0.obs;
   final List<Widget> screens = [
     const HomeView(),
-    const LocationView(),
+     const LocationView(),
     const CheckAppointments(),
     const ProfileBottom()
     // Add your other views here

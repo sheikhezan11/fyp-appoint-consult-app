@@ -24,7 +24,7 @@ class _BottomWidgetState extends State<BottomWidget> {
   int currentTab = 0;
   final List<Widget> screens = [
     const HomeView(),
-    const LocationView(),
+     const LocationView(),
     const CheckAppointments(),
     const ProfileBottom(),
   ];

@@ -7,10 +7,11 @@ import 'package:uuid/uuid.dart';
 
 import 'resources/routes/pages.dart';
 import 'resources/routes/routes.dart';
+
 var uuid = const Uuid();
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const MyApp());
 }
 
@@ -23,7 +24,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xff68609c)),
-          useMaterial3: true,
+        useMaterial3: true,
       ),
       title: 'MedEase',
       builder: (context, child) => ResponsiveWrapper.builder(
@@ -34,9 +35,10 @@ class MyApp extends StatelessWidget {
           ResponsiveBreakpoint.resize(1000, name: DESKTOP),
         ],
       ),
+      onGenerateRoute: Pages.onGenerateRoute,
       initialRoute: Routes.onboardingView,
-      // home:  const OnboardView(),
-       getPages: Pages.appRoutes(),
+      defaultTransition: Transition.rightToLeft,
+      smartManagement: SmartManagement.full,
     );
   }
 }

@@ -54,6 +54,8 @@ dependencies:
   image_picker: ^1.1.1
   flutter_phone_direct_caller: ^2.1.1
   url_launcher: ^6.3.0
+  location: ^6.0.2
+  permission_handler: ^11.3.1
 flutter_native_splash:
   background_image: "assets/images/splash2.png"
   image: "assets/images/medease1.png"

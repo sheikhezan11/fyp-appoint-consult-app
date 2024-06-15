@@ -14,57 +14,92 @@ class LoginController extends GetxController {
   RxBool isLoading = false.obs;
   RxBool isObscure = false.obs;
   RxString id = "".obs;
+void login(String email, String password) async {
+  UserCredential? credential;
+  try {
+    isLoading.value = true;
+    credential = await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password);
+  } on FirebaseAuthException catch (ex) {
+    isLoading.value = false;
 
-  void login(String email, String password) async {
-    UserCredential? credential;
-    try {
-      isLoading.value = true;
-      credential = await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
-    } on FirebaseAuthException catch (ex) {
-      if (kDebugMode) {
-        print(ex.code.toString());
-      }
-      isLoading.value = false;
+    String errorMessage;
+    switch (ex.code) {
+      case 'invalid-email':
+        errorMessage = 'The email address is not valid.';
+        break;
+      case 'user-disabled':
+        errorMessage = 'This user has been disabled.';
+        break;
+      case 'user-not-found':
+        errorMessage = 'No user found for that email.';
+        break;
+      case 'wrong-password':
+        errorMessage = 'Wrong password provided.';
+        break;
+      default:
+        errorMessage = ex.message ?? 'An undefined error occurred.';
     }
-    if (credential != null) {
-      String uid = credential.user!.uid;
 
-      // Check if user exists in either users or doctors collection
-      QuerySnapshot usersSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .where('uid', isEqualTo: uid)
-          .get();
-      QuerySnapshot doctorsSnapshot = await FirebaseFirestore.instance
-          .collection('doctors')
-          .where('uid', isEqualTo: uid)
-          .get();
-
-      if (usersSnapshot.docs.isNotEmpty) {
-        if (kDebugMode) {
-          print("User found in users collection: $uid");
-        }
-        CustomSnackbar.show(Get.context!, "Patient logged In Successfully!");
-
-        // Navigate to user dashboard
-        Get.toNamed(Routes.dashboard, arguments: {"id": uid});
-        return;
-      } else if (doctorsSnapshot.docs.isNotEmpty) {
-        if (kDebugMode) {
-          print("User found in doctors collection: $uid");
-        }
-        // Navigate to doctor dashboard
-        CustomSnackbar.show(Get.context!, "Doctor logged In Successfully!");
-
-        Get.toNamed(Routes.newPassword);
-        return;
-      } else {
-        if (kDebugMode) {
-          print("User not found in users or doctors collection");
-        }
-      }
+    if (kDebugMode) {
+      print('FirebaseAuthException: ${ex.code} - ${ex.message}');
     }
+
+    CustomSnackbar.show(Get.context!, errorMessage);
+    return; // Exit the function if there's an error
+  } catch (ex) {
+    isLoading.value = false;
+
+    String errorMessage = 'An error occurred. Please try again later.';
+    if (kDebugMode) {
+      print('Exception: $ex');
+    }
+
+    CustomSnackbar.show(Get.context!, errorMessage);
+    return; // Exit the function if there's an error
   }
+
+  // ignore: unnecessary_null_comparison
+  if (credential != null) {
+    String uid = credential.user!.uid;
+
+    // Check if user exists in either users or doctors collection
+    QuerySnapshot usersSnapshot = await FirebaseFirestore.instance
+        .collection('users')
+        .where('uid', isEqualTo: uid)
+        .get();
+    QuerySnapshot doctorsSnapshot = await FirebaseFirestore.instance
+        .collection('doctors')
+        .where('uid', isEqualTo: uid)
+        .get();
+
+    if (usersSnapshot.docs.isNotEmpty) {
+      if (kDebugMode) {
+        print("User found in users collection: $uid");
+      }
+      CustomSnackbar.show(Get.context!, "Patient logged in successfully!");
+
+      // Navigate to user dashboard
+      Get.toNamed(Routes.dashboard, arguments: {"id": uid});
+    } else if (doctorsSnapshot.docs.isNotEmpty) {
+      if (kDebugMode) {
+        print("User found in doctors collection: $uid");
+      }
+      CustomSnackbar.show(Get.context!, "Doctor logged in successfully!");
+
+      // Navigate to doctor dashboard
+      Get.toNamed(Routes.newPassword);
+    } else {
+      if (kDebugMode) {
+        print("User not found in users or doctors collection");
+      }
+      CustomSnackbar.show(Get.context!, "User not found.");
+    }
+    isLoading.value = false; // Make sure to set isLoading to false after processing
+  }
+}
+
+
 
   @override
   void onInit() {

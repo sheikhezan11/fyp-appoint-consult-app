@@ -230,12 +230,15 @@ class CategoryButton extends StatelessWidget {
     return TextButton(
       onPressed: onPressed,
       style: ButtonStyle(
+        // ignore: deprecated_member_use
         backgroundColor: MaterialStateProperty.resolveWith<Color>((states) {
           return isSelected ? const Color(0xff68609c) : Colors.white;
         }),
+        // ignore: deprecated_member_use
         overlayColor: MaterialStateProperty.resolveWith<Color>(
           (states) => isSelected ? Colors.white : const Color(0xff68609c),
         ),
+        // ignore: deprecated_member_use
         side: MaterialStateProperty.resolveWith<BorderSide>(
           (states) => isSelected
               ? BorderSide.none

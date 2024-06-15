@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,7 +16,8 @@ class CheckAppointmentController extends GetxController {
   var cancelledAppointments = <BookAppointmentModel>[].obs;
   String chooseTime = '';
   String doctorId = "";
-bool isAppointmentTime(String appointmentDate, String workingTime) {
+  
+  bool isAppointmentTime(String appointmentDate, String workingTime) {
     DateTime now = DateTime.now();
     DateFormat dateFormat = DateFormat('d-M-yyyy h:mma');
     try {
@@ -29,22 +32,35 @@ bool isAppointmentTime(String appointmentDate, String workingTime) {
       return false;
     }
   }
+  
+  // ignore: unused_field
+  late Timer? _timer;
   @override
   void onInit() {
     super.onInit();
     fetchAppointments();
     getDoctorIds();
-  }
-  void onTimeSelected(String time) {
-      // Update the selected time for the selected doctor
-      selectedDoctor.selectedTime = time;
-      chooseTime = selectedDoctor.selectedTime!;
+    // ignore: prefer_const_constructors
+    _timer=Timer.periodic((Duration(seconds: 2)), (timer){
+      fetchAppointments();
       if (kDebugMode) {
-        print(chooseTime);
+        print("object");
       }
-      // Update the UI by triggering a re-build
-      update(["day"]);
+    });
+  }
+  
+  
+  
+  void onTimeSelected(String time) {
+    // Update the selected time for the selected doctor
+    selectedDoctor.selectedTime = time;
+    chooseTime = selectedDoctor.selectedTime!;
+    if (kDebugMode) {
+      print(chooseTime);
     }
+    // Update the UI by triggering a re-build
+    update(["day"]);
+  }
 
   Future<void> fetchAppointments() async {
     try {
@@ -220,6 +236,4 @@ Future<void> rescheduleAppointment(String appointmentId, String newDate, String 
     }
   }
 }
-
-
 }

@@ -1,6 +1,6 @@
 import 'package:MedEase/resources/routes/pages.dart';
-import 'package:get/get.dart';
-
+import 'package:flutter/widgets.dart';
+import 'package:get/get_navigation/get_navigation.dart';
 
 import '../../utils/bottom_widget.dart';
 import '../../view/appointments/check_appointments.dart';
@@ -10,6 +10,7 @@ import '../../view/category/categeory_view.dart';
 import '../../view/doctor_detail/doctordetail_view.dart';
 import '../../view/doctor_profile/doctor_profile.dart';
 import '../../view/home/home_view.dart';
+import '../../view/location/location_view.dart';
 import '../../view/login/login_view.dart';
 import '../../view/new_password/new_password_view.dart';
 import '../../view/onboarding/onboarding_view.dart';
@@ -18,7 +19,6 @@ import '../../view/profile/profile_view.dart';
 import '../../view/profile_bottom/profile_bottom_view.dart';
 import '../../view/register/registration_view.dart';
 import '../../view/video_messenger/video_messenger.dart';
-import '../../view/voice_messenger/voice_messenger.dart';
 import '../../viewmodel/binding/appointments/check_appointments_binding.dart';
 import '../../viewmodel/binding/book_appointment/book_appointment_binding.dart';
 import '../../viewmodel/binding/categories/categories_binding.dart';
@@ -27,100 +27,136 @@ import '../../viewmodel/binding/dashboard/dashboard_binding.dart';
 import '../../viewmodel/binding/doctor_detail/doctor_detail_binding.dart';
 import '../../viewmodel/binding/doctor_profile/doctor_profile_binding.dart';
 import '../../viewmodel/binding/home/home_binding.dart';
+import '../../viewmodel/binding/location_view/location_view_binding.dart';
 import '../../viewmodel/binding/login/login_binding.dart';
 import '../../viewmodel/binding/onboarding/onboarding_binding.dart';
 import '../../viewmodel/binding/profile/profile_binding.dart';
 import '../../viewmodel/binding/register/register_binding.dart';
 import '../../viewmodel/binding/video_messenger/video_messenger_binding.dart';
-import '../../viewmodel/binding/voice_messenger/voice_messenger_binding.dart';
-
-
 
 class Pages {
-  static appRoutes() => [
-        GetPage(
-          name: Routes.onboardingView,
+  static Transition get _routeTransition => Transition.rightToLeft;
+  static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case Routes.onboardingView:
+        return GetPageRoute(
+          settings: settings,
           page: () => const OnboardingView(),
           binding: OnBoardingBinding(),
-        ),
-        GetPage(
-          name: Routes.loginView,
+          transition: _routeTransition,
+        );
+      case Routes.loginView:
+        return GetPageRoute(
+          settings: settings,
           page: () => const LoginView(),
           binding: LoginBinding(),
-        ),
-        GetPage(
-          name: Routes.registerView,
+          transition: _routeTransition,
+        );
+      case Routes.registerView:
+        return GetPageRoute(
+          settings: settings,
           page: () => const RegisterView(),
           binding: RegisterBinding(),
-        ),
-        GetPage(
-          name: Routes.otpView,
+          transition: _routeTransition,
+        );
+      case Routes.otpView:
+        return GetPageRoute(
+          settings: settings,
           page: () => const OtpView(),
-          // binding: RegisterBinding(),
-        ),
-        GetPage(
-          name: Routes.newPassword,
+          transition: _routeTransition,
+        );
+      case Routes.newPassword:
+        return GetPageRoute(
+          settings: settings,
           page: () => const NewPassword(),
-          // binding: RegisterBinding(),
-        ),
-        GetPage(
-          name: Routes.profileView,
+          transition: _routeTransition,
+        );
+      case Routes.profileView:
+        return GetPageRoute(
+          settings: settings,
           page: () => const ProfileView(),
           binding: ProfileBinding(),
-        ),
-        GetPage(
-          name: Routes.homeView,
+          transition: _routeTransition,
+        );
+      case Routes.homeView:
+        return GetPageRoute(
+          settings: settings,
           page: () => const HomeView(),
           binding: HomeBinding(),
-        ),
-        GetPage(
-          name: Routes.dashboard,
+          transition: _routeTransition,
+        );
+      case Routes.dashboard:
+        return GetPageRoute(
+          settings: settings,
           page: () => const BottomWidget(),
           binding: DashboardBinding(),
-        ),
-        GetPage(
-          name: Routes.category,
+          transition: _routeTransition,
+        );
+      case Routes.category:
+        return GetPageRoute(
+          settings: settings,
           page: () => const CategoryView(),
           binding: CategoryBinding(),
-        ),
-        GetPage(
-          name: Routes.doctorDetail,
+          transition: _routeTransition,
+        );
+      case Routes.doctorDetail:
+        return GetPageRoute(
+          settings: settings,
           page: () => const DoctorDetail(),
           binding: DoctorDetailBinding(),
-        ),
-        GetPage(
-          name: Routes.bookAppointment,
+          transition: _routeTransition,
+        );
+      case Routes.bookAppointment:
+        return GetPageRoute(
+          settings: settings,
           page: () => const BookAppointment(),
           binding: BookAppointmentBinding(),
-        ),
-        GetPage(
-          name: Routes.doctorProfile,
+          transition: _routeTransition,
+        );
+      case Routes.doctorProfile:
+        return GetPageRoute(
+          settings: settings,
           page: () => const DoctorProfile(),
           binding: DoctorProfileBinding(),
-        ),
-        GetPage(
-          name: Routes.checkAppointments,
+          transition: _routeTransition,
+        );
+      case Routes.checkAppointments:
+        return GetPageRoute(
+          settings: settings,
           page: () => const CheckAppointments(),
           binding: CheckAppointmentBinding(),
-        ),
-         GetPage(
-          name: Routes.categories,
+          transition: _routeTransition,
+        );
+      case Routes.categories:
+        return GetPageRoute(
+          settings: settings,
           page: () => const CategoriesView(),
           binding: CategoriesBinding(),
-        ),
-         GetPage(
-          name: Routes.checkProfile,
+          transition: _routeTransition,
+        );
+      case Routes.checkProfile:
+        return GetPageRoute(
+          settings: settings,
           page: () => const ProfileBottom(),
-          // binding: CategoriesBinding(),
-        ),
-         GetPage(
-          name: Routes.videoPage,
+          transition: _routeTransition,
+        );
+      case Routes.videoPage:
+        return GetPageRoute(
+          settings: settings,
           page: () => const VideoCallPage(),
           binding: VideoMessengerBinding(),
-        ),  GetPage(
-          name: Routes.voicePage,
-          page: () => const VoiceCallPage(),
-          binding: VoiceMessengerBinding(),
-        ),
-      ];
+          transition: _routeTransition,
+        );
+      case Routes.location:
+        return GetPageRoute(
+          settings: settings,
+          // ignore: prefer_const_constructors
+          page: () =>  LocationView(),
+          binding: LocationBinding(),
+          transition: _routeTransition,
+        );
+      default:
+        return null;
+    }
+  }
 }

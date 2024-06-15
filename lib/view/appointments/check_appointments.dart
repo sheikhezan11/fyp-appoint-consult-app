@@ -1,46 +1,53 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../model/bookappointment_model.dart';
 import '../../resources/routes/pages.dart';
+import '../../utils/custom_button.dart';
 import '../../viewmodel/controller/check_appointment/check_appointment_controller.dart';
 
-class CheckAppointments extends GetView<CheckAppointmentController> {
+class CheckAppointments extends StatelessWidget {
   const CheckAppointments({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // ignore: unused_local_variable
     final CheckAppointmentController controller =
         Get.put(CheckAppointmentController());
 
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          centerTitle: true,
-          title: const Text(
-            "My Bookings",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
-          ),
-          bottom: const TabBar(tabs: [
-            Tab(text: "Upcoming"),
-            Tab(text: "Completed"),
-            Tab(text: "Cancelled"),
-          ]),
-        ),
-        body: TabBarView(
-          children: [
-            Obx(() => buildAppointmentList(
-                controller.upcomingAppointments, controller)),
-            Obx(() => buildAppointmentList(
-                controller.completedAppointments, controller)),
-            Obx(() => buildAppointmentList(
-                controller.cancelledAppointments, controller)),
-          ],
-        ),
-      ),
-    );
+    return GetBuilder(
+        init: CheckAppointmentController(),
+        builder: (controller) {
+          return DefaultTabController(
+            length: 3,
+            child: Scaffold(
+              appBar: AppBar(
+                automaticallyImplyLeading: false,
+                centerTitle: true,
+                title: const Text(
+                  "My Bookings",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+                ),
+                bottom: const TabBar(tabs: [
+                  Tab(text: "Upcoming"),
+                  Tab(text: "Completed"),
+                  Tab(text: "Cancelled"),
+                ]),
+              ),
+              body: TabBarView(
+                children: [
+                  Obx(() => buildAppointmentList(
+                      controller.upcomingAppointments, controller)),
+                  Obx(() => buildAppointmentList(
+                      controller.completedAppointments, controller)),
+                  Obx(() => buildAppointmentList(
+                      controller.cancelledAppointments, controller)),
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   Widget buildAppointmentList(List<BookAppointmentModel> appointments,
@@ -132,6 +139,7 @@ class CheckAppointments extends GetView<CheckAppointmentController> {
                       left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),
                   child: Divider(color: Colors.grey, thickness: 1),
                 ),
+                if(isUpcoming)...[
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -142,50 +150,34 @@ class CheckAppointments extends GetView<CheckAppointmentController> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                    InkWell(
-                      onTap: () {
-                        Get.toNamed(Routes.videoPage, arguments: {
-                          "callId": appointments[index].documentId,
-                          "userName": appointments[index].doctorName
-                        });
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(60.0),
-                          color: const Color(0xff68609c),
-                        ),
-                        width: 50,
-                        height: 50.0,
-                        child: const Icon(
-                          Icons.video_call_outlined,
-                          color: Colors.white,
-                        ),
+                  InkWell(
+                    onTap: () {
+                      Get.toNamed(Routes.videoPage, arguments: {
+                        "callId": appointments[index].documentId,
+                        "userName": appointments[index].doctorName
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(60.0),
+                        color: const Color(0xff68609c),
+                      ),
+                      width: 50,
+                      height: 50.0,
+                      child: const Icon(
+                        Icons.video_call_outlined,
+                        color: Colors.white,
                       ),
                     ),
+                  ),
                   InkWell(
-                     onTap: () {
+                    onTap: () {
                       Get.toNamed(Routes.voicePage, arguments: {
                         "callId": appointments[index].documentId,
                         "userName": appointments[index].doctorName
                       });
                     },
-                    // onTap: () async {
-                      
-                      // const phoneNumber = '+92073874347433';
-                      // final Uri launchUri = Uri(
-                      //   scheme: 'tel',
-                      //   path: phoneNumber,
-                      // );
-                      // if (await canLaunch(launchUri.toString())) {
-                      //   await launch(launchUri.toString());
-                      // } else {
-                      //   // Handle error: Could not launch the phone call
-                      //   ScaffoldMessenger.of(context).showSnackBar(
-                      //     const SnackBar(
-                      //         content: Text('Could not launch the phone call')),
-                      //   );
-                      // }
-                    // },
+                
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(60.0),
@@ -195,7 +187,7 @@ class CheckAppointments extends GetView<CheckAppointmentController> {
                       height: 50.0,
                       child: const Icon(
                         Icons.phone,
-                        color: Colors.white,  
+                        color: Colors.white,
                       ),
                     ),
                   ),
@@ -218,6 +210,7 @@ class CheckAppointments extends GetView<CheckAppointmentController> {
                     left: 10.0, right: 10.0, top: 5.0, bottom: 10.0),
                 child: Divider(color: Colors.grey, thickness: 1),
               ),
+                ],
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: Row(
@@ -391,18 +384,28 @@ class _RescheduleBottomSheetState extends State<RescheduleBottomSheet> {
             const SizedBox(height: 16),
             _buildTimeContainer(controller.doctorWorkingTimes),
             const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () async {
-                await controller.rescheduleAppointment(
-                  widget.id,
-                  "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}",
-                  controller.chooseTime,
-                );
-                // ignore: use_build_context_synchronously
-                Navigator.pop(context); // Close the bottom sheet
-              },
-              child: const Text("Done"),
-            ),
+          
+            FadeInUp(
+                duration: const Duration(milliseconds: 1200),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10.0, vertical: 15.0),
+                  child: CustomButton(
+                      clr: const Color(0xff68609c),
+                      textClr: Colors.green,
+                      buttonTitle: "Reschedule",
+                      width: MediaQuery.of(context).size.width,
+                      height: 50.0,
+                      ontapp: () async {
+                        await controller.rescheduleAppointment(
+                          widget.id,
+                          "${selectedDate.day}/${selectedDate.month}/${selectedDate.year}",
+                          controller.chooseTime,
+                        );
+                        // ignore: use_build_context_synchronously
+                        Navigator.pop(context);
+                      }),
+                )),
           ],
         ),
       ),
