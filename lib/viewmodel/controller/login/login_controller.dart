@@ -88,7 +88,9 @@ void login(String email, String password) async {
       CustomSnackbar.show(Get.context!, "Doctor logged in successfully!");
 
       // Navigate to doctor dashboard
-      Get.toNamed(Routes.newPassword);
+      Get.toNamed(Routes.drDashboard,arguments: {
+        "doctorUid":uid
+      });
     } else {
       if (kDebugMode) {
         print("User not found in users or doctors collection");

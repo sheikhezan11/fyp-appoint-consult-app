@@ -2,7 +2,7 @@ class DoctorModel {
   String? uid;
   String? doctorName;
   String? doctorSpeciality;
-  String? email;
+
   String? aboutDoctor;
   List<String>? workingTime; // Changed to List<String>
   List<String>? workingDays; // Changed to List<String>
@@ -10,6 +10,7 @@ class DoctorModel {
   String? profilepic;
   bool? isFavorite;
   String? doctorUid;
+  String? email;
 
   DoctorModel({
     this.uid,
@@ -30,13 +31,16 @@ class DoctorModel {
     profilepic = map["profilepic"];
     doctorName = map["doctorName"];
     email = map["email"];
+
     doctorSpeciality = map["doctorSpeciality"];
     aboutDoctor = map["aboutDoctor"];
-    workingTime = (map["workingTime"] as String?)?.split(','); // Split the string into a list
-    workingDays = (map["workingDays"] as String?)?.split(','); // Split the string into a list
+    workingTime = (map["workingTime"] as String?)
+        ?.split(','); // Split the string into a list
+    workingDays = (map["workingDays"] as String?)
+        ?.split(','); // Split the string into a list
     doctorAddress = map["doctorAddress"];
     isFavorite = map["isFavorite"];
-    doctorUid=map["doctorUid"];
+    doctorUid = map["doctorUid"];
   }
 
   Map<String, dynamic> toMap() {
@@ -51,7 +55,7 @@ class DoctorModel {
       "doctorAddress": doctorAddress,
       "profilepic": profilepic,
       "isFavorite": isFavorite,
-      "doctorUid":doctorUid
+      "doctorUid": doctorUid
     };
   }
 

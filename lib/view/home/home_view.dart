@@ -1,3 +1,4 @@
+import 'package:MedEase/viewmodel/controller/location_view/location_view_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -18,6 +19,7 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     final DashboardController dashboardController =
         Get.put(DashboardController());
+        final LocationController locationController=Get.put(LocationController());
     return SafeArea(
         top: false,
         child: Scaffold(
@@ -42,17 +44,23 @@ class HomeView extends GetView<HomeController> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Column(
+                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text("location"),
+                              const Text("location"),
                               Row(
                                 children: [
-                                  Icon(Icons.location_on_outlined),
-                                  SizedBox(width: 2),
-                                  Text("Saddar, Karachi"),
-                                  SizedBox(width: 3),
-                                  Icon(Icons.keyboard_arrow_down_rounded),
+                                  const Icon(Icons.location_on_outlined),
+                                  const SizedBox(width: 2),
+                                  SizedBox(
+                                    width: 160,
+                                    child:Obx(() => Text(
+                                    locationController.currentAddress.value,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  )),),
+                                  const SizedBox(width: 3),
+                                  // const Icon(Icons.keyboard_arrow_down_rounded),
                                 ],
                               ),
                             ],

@@ -139,78 +139,86 @@ class CheckAppointments extends StatelessWidget {
                       left: 10.0, right: 10.0, top: 5.0, bottom: 5.0),
                   child: Divider(color: Colors.grey, thickness: 1),
                 ),
-                if(isUpcoming)...[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  const Text(
-                    "Contact: ",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Get.toNamed(Routes.videoPage, arguments: {
-                        "callId": appointments[index].documentId,
-                        "userName": appointments[index].doctorName
-                      });
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(60.0),
-                        color: const Color(0xff68609c),
-                      ),
-                      width: 50,
-                      height: 50.0,
-                      child: const Icon(
-                        Icons.video_call_outlined,
-                        color: Colors.white,
+              if (isUpcoming) ...[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    const Text(
+                      "Contact: ",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                  ),
-                  InkWell(
-                    onTap: () {
-                      Get.toNamed(Routes.voicePage, arguments: {
-                        "callId": appointments[index].documentId,
-                        "userName": appointments[index].doctorName
-                      });
-                    },
-                
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(60.0),
-                        color: const Color(0xff68609c),
+                    InkWell(
+                      onTap: () {
+                        Get.toNamed(Routes.videoPage, arguments: {
+                          "callId": appointments[index].documentId,
+                          "userName": appointments[index].doctorName
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(60.0),
+                          color: const Color(0xff68609c),
+                        ),
+                        width: 50,
+                        height: 50.0,
+                        child: const Icon(
+                          Icons.video_call_outlined,
+                          color: Colors.white,
+                        ),
                       ),
-                      width: 50,
-                      height: 50.0,
-                      child: const Icon(
-                        Icons.phone,
-                        color: Colors.white,
+                    ),
+                    InkWell(
+                      onTap: () {
+                        Get.toNamed(Routes.voicePage, arguments: {
+                          "callId": appointments[index].documentId,
+                          "userName": appointments[index].doctorName
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(60.0),
+                          color: const Color(0xff68609c),
+                        ),
+                        width: 50,
+                        height: 50.0,
+                        child: const Icon(
+                          Icons.phone,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
-                  ),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(60.0),
-                      color: const Color(0xff68609c),
+                    InkWell(
+                      onTap: () {
+                        Get.toNamed(Routes.chatRoom, arguments: {
+                          "appointmentId": appointments[index].documentId,
+                          "doctorUid": appointments[index].doctorUid,
+                          "patientUid": appointments[index].uid,
+                        });
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(60.0),
+                          color: const Color(0xff68609c),
+                        ),
+                        width: 50.0,
+                        height: 50.0,
+                        child: const Icon(
+                          Icons.chat,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                    width: 50.0,
-                    height: 50.0,
-                    child: const Icon(
-                      Icons.chat,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-              const Padding(
-                padding: EdgeInsets.only(
-                    left: 10.0, right: 10.0, top: 5.0, bottom: 10.0),
-                child: Divider(color: Colors.grey, thickness: 1),
-              ),
-                ],
+                  ],
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(
+                      left: 10.0, right: 10.0, top: 5.0, bottom: 10.0),
+                  child: Divider(color: Colors.grey, thickness: 1),
+                ),
+              ],
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 10.0),
                 child: Row(
@@ -384,7 +392,6 @@ class _RescheduleBottomSheetState extends State<RescheduleBottomSheet> {
             const SizedBox(height: 16),
             _buildTimeContainer(controller.doctorWorkingTimes),
             const SizedBox(height: 16),
-          
             FadeInUp(
                 duration: const Duration(milliseconds: 1200),
                 child: Padding(

@@ -1,4 +1,10 @@
 import 'package:MedEase/resources/routes/pages.dart';
+import 'package:MedEase/view/chatroom/chatroom_view.dart';
+import 'package:MedEase/view/dr_dashboard/dr_dashboard_view.dart';
+import 'package:MedEase/view/voice_messenger/voice_messenger.dart';
+import 'package:MedEase/viewmodel/binding/chat_screen/chat_screen_binding.dart';
+import 'package:MedEase/viewmodel/binding/dr_dashboard/dr_dashboard_binding.dart';
+import 'package:MedEase/viewmodel/binding/voice_messenger/voice_messenger_binding.dart';
 import 'package:flutter/widgets.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 
@@ -146,13 +152,34 @@ class Pages {
           page: () => const VideoCallPage(),
           binding: VideoMessengerBinding(),
           transition: _routeTransition,
+        ); 
+        case Routes.voicePage:
+        return GetPageRoute(
+          settings: settings,
+          page: () => const VoiceCallPage(),
+          binding: VoiceMessengerBinding(),
+          transition: _routeTransition,
         );
       case Routes.location:
         return GetPageRoute(
           settings: settings,
           // ignore: prefer_const_constructors
-          page: () =>  LocationView(),
+          page: () => LocationView(),
           binding: LocationBinding(),
+          transition: _routeTransition,
+        );
+      case Routes.chatRoom:
+        return GetPageRoute(
+          settings: settings,
+          page: () => const ChatScreen(),
+          binding: ChatScreenBinding(),
+          transition: _routeTransition,
+        );  
+        case Routes.drDashboard:
+        return GetPageRoute(
+          settings: settings,
+          page: () => const DrDashboardView(),
+          binding: DrDashboardBinding(),
           transition: _routeTransition,
         );
       default:

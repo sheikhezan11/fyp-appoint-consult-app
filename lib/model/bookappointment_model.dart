@@ -10,20 +10,25 @@ class BookAppointmentModel {
   String? status;
   String? doctorUid;
   String? documentId;
+  String? userName;
+  String? userEmail;
+  String? userProfilePic;
 
-  BookAppointmentModel({
-    this.uid,
-    this.doctorName,
-    this.doctorSpeciality,
-    this.doctorAddress,
-    this.email,
-    this.doctorDate,
-    this.doctorTime,
-    this.profilePic,
-    this.doctorUid,
-    this.status,
-    this.documentId
-  });
+  BookAppointmentModel(
+      {this.userEmail,
+      this.userProfilePic,
+      this.uid,
+      this.doctorName,
+      this.userName,
+      this.doctorSpeciality,
+      this.doctorAddress,
+      this.email,
+      this.doctorDate,
+      this.doctorTime,
+      this.profilePic,
+      this.doctorUid,
+      this.status,
+      this.documentId});
 
   BookAppointmentModel.fromMap(Map<String, dynamic> map) {
     uid = map["uid"];
@@ -34,9 +39,12 @@ class BookAppointmentModel {
     doctorDate = map["appointmentDate"] as String?;
     doctorTime = map["workingTime"] as String?;
     doctorAddress = map["doctorAddress"];
-    status=map["status"];
-    doctorUid=map["doctorUid"];
-    documentId=map["documentId"];
+    status = map["status"];
+    doctorUid = map["doctorUid"];
+    documentId = map["documentId"];
+    userName = map["userName"];
+    userEmail = map["userEmail"];
+    userProfilePic = map["userProfile"];
   }
 
   Map<String, dynamic> toMap() {
@@ -48,10 +56,13 @@ class BookAppointmentModel {
       "workingTime": doctorTime,
       "appointmentDate": doctorDate,
       "doctorAddress": doctorAddress,
-      "profilePic": profilePic, 
-      "status":status,
-      "doctorUid":doctorUid,
-      "documentId":documentId
+      "profilePic": profilePic,
+      "status": status,
+      "doctorUid": doctorUid,
+      "documentId": documentId,
+      "userEmail":userEmail,
+      "userName": userName,
+      "userProfile":userProfilePic
     };
   }
 }

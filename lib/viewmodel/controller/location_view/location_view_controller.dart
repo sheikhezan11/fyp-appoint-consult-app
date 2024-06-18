@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ui' as ui;
 import 'package:custom_info_window/custom_info_window.dart';
 import 'package:flutter/foundation.dart';
@@ -6,16 +5,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
-import 'package:location/location.dart';
-import 'package:http/http.dart' as http;
+import 'package:location/location.dart' as loc;
+import 'package:geocoding/geocoding.dart';
 
 class LocationController extends GetxController {
-  final CustomInfoWindowController customInfoWindowController = CustomInfoWindowController();
+  final CustomInfoWindowController customInfoWindowController =
+      CustomInfoWindowController();
   LatLng latLng = const LatLng(24.8683, 67.0056); // Default location
   final double zoom = 15.0;
   final Set<Marker> markers = <Marker>{}.obs;
   final Set<Polyline> polylines = <Polyline>{}.obs; // Add this for polylines
-  final Location location = Location();
+  final loc.Location location = loc.Location();
+  var currentAddress = ''.obs;
   GoogleMapController? googleMapController;
 
   final List<String> images = [
@@ -27,10 +28,14 @@ class LocationController extends GetxController {
 
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(), targetWidth: width);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
+        targetWidth: width);
     ui.FrameInfo fi = await codec.getNextFrame();
-    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!.buffer.asUint8List();
+    return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
+        .buffer
+        .asUint8List();
   }
+
 
   @override
   void onInit() {
@@ -41,7 +46,7 @@ class LocationController extends GetxController {
 
   void _getUserLocation() async {
     bool _serviceEnabled;
-    PermissionStatus _permissionGranted;
+    loc.PermissionStatus _permissionGranted;
 
     _serviceEnabled = await location.serviceEnabled();
     if (!_serviceEnabled) {
@@ -52,22 +57,35 @@ class LocationController extends GetxController {
     }
 
     _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
+    if (_permissionGranted == loc.PermissionStatus.denied) {
       _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) {
+      if (_permissionGranted != loc.PermissionStatus.granted) {
         return;
       }
     }
-
-    LocationData _locationData = await location.getLocation();
+    loc.LocationData _locationData = await location.getLocation();
     latLng = LatLng(_locationData.latitude!, _locationData.longitude!);
+
+    // Print the latitude and longitude in the console
+    print('Latitude: ${latLng.latitude}, Longitude: ${latLng.longitude}');
+
+    // Get the address using reverse geocoding
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(latLng.latitude, latLng.longitude);
+    Placemark place = placemarks[0];
+    String address =
+        '${place.street}, ${place.locality}, ${place.postalCode}, ${place.country}';
+    currentAddress.value = address;
+    // Print the address
+    print('Address: $address');
 
     markers.add(
       Marker(
         markerId: const MarkerId('currentLocation'),
         position: latLng,
-        infoWindow: const InfoWindow(
+        infoWindow: InfoWindow(
           title: 'Your Location',
+          snippet: address,
         ),
       ),
     );
@@ -82,70 +100,6 @@ class LocationController extends GetxController {
         ),
       );
     }
-
-    // Fetch and display route to the nearest hospital
-    fetchRouteToHospital();
-  }
-
-  void fetchRouteToHospital() async {
-  LatLng hospitalLatLng = LatLng(24.8607, 67.0011);
-  String apiKey = 'AIzaSyCg0uJGy4t94Mu7ngzUu6GjgmB2dsF9npo';
-  String url =
-      'https://maps.googleapis.com/maps/api/directions/json?origin=${latLng.latitude},${latLng.longitude}&destination=${hospitalLatLng.latitude},${hospitalLatLng.longitude}&key=$apiKey';
-
-  var response = await http.get(Uri.parse(url));
-  if (response.statusCode == 200) {
-    var json = jsonDecode(response.body);
-    if (json['routes'].isNotEmpty) {
-      var route = json['routes'][0];
-      var polylinePoints = route['overview_polyline']['points'];
-
-      List<LatLng> points = _decodePolyline(polylinePoints);
-
-      polylines.add(
-        Polyline(
-          polylineId: PolylineId('route1'),
-          points: points,
-          color: Colors.amber,
-          width: 5,
-        ),
-      );
-
-      update();
-    }
-  }
-}
-
-
-  List<LatLng> _decodePolyline(String polyline) {
-    List<LatLng> points = [];
-    int index = 0, len = polyline.length;
-    int lat = 0, lng = 0;
-
-    while (index < len) {
-      int b, shift = 0, result = 0;
-      do {
-        b = polyline.codeUnitAt(index++) - 63;
-        result |= (b & 0x1f) << shift;
-        shift += 5;
-      } while (b >= 0x20);
-      int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-      lat += dlat;
-
-      shift = 0;
-      result = 0;
-      do {
-        b = polyline.codeUnitAt(index++) - 63;
-        result |= (b & 0x1f) << shift;
-        shift += 5;
-      } while (b >= 0x20);
-      int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
-      lng += dlng;
-
-      points.add(LatLng(lat / 1E5, lng / 1E5));
-    }
-
-    return points;
   }
 
   void loadData() async {
@@ -153,7 +107,8 @@ class LocationController extends GetxController {
       if (kDebugMode) {
         print('name${images[i]}');
       }
-      final Uint8List markerIcon = await getBytesFromAsset(images[i].toString(), 100);
+      final Uint8List markerIcon =
+          await getBytesFromAsset(images[i].toString(), 100);
 
       markers.add(
         Marker(

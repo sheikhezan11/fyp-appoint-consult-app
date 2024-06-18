@@ -165,8 +165,8 @@ class CategoryView extends StatelessWidget {
                                                 fontSize: 18),
                                           ),
                                         ),
-                                        const Icon(Icons.favorite_border,
-                                            color: Colors.black),
+                                          // const Icon(Icons.favorite_border,
+                                          //     color: Colors.black),
                                       ],
                                     ),
                                     const Divider(

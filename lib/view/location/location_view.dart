@@ -28,6 +28,7 @@ class LocationView extends StatelessWidget {
                   controller.googleMapController = mapController;
 
                   // Move the camera to the user's location if available
+                  // ignore: unnecessary_null_comparison
                   if (controller.latLng != null) {
                     controller.googleMapController!.animateCamera(
                       CameraUpdate.newCameraPosition(

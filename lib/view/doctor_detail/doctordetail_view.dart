@@ -24,13 +24,13 @@ class DoctorDetail extends GetView<DoctorDetailController> {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(
-                Icons.favorite_border,
-                color: Colors.black,
-              ),
-            ),
+            // const Padding(
+            //   padding: EdgeInsets.all(8.0),
+            //   child: Icon(
+            //     Icons.favorite_border,
+            //     color: Colors.black,
+            //   ),
+            // ),
           ],
         ),
       ),

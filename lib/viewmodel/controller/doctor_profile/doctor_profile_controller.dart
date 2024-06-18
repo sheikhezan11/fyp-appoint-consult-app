@@ -171,7 +171,7 @@ class DoctorProfileController extends GetxController {
       }
     }
     isLoading.value = false;
-    Get.offAllNamed(Routes.dashboard, arguments: {"id": doctorMod.uid});
+    Get.offAllNamed(Routes.drDashboard, arguments: {"id": doctorMod.uid});
   }
 
   void toggleFavoriteStatus() async {

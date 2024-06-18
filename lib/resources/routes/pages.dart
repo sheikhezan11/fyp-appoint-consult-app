@@ -17,5 +17,7 @@ class Routes {
   static const String videoPage= '/video_call'; 
   static const String voicePage= '/voice_call'; 
   static const String location= '/location';
+  static const String chatRoom= '/chatRoom';
+  static const String drDashboard= '/dr_Dashboard';
 
 }

@@ -74,6 +74,7 @@ class BookAppointmentController extends GetxController {
 
   @override
   void onInit() {
+    print(dashboardController.id);
     doctorId = Get.arguments != null ? Get.arguments["doctorId"] : "";
     doctorModel = Get.arguments != null
         ? Get.arguments["doctorDetail"]
@@ -124,6 +125,7 @@ class BookAppointmentController extends GetxController {
     String? doctorSpeciality = doctorModel.doctorSpeciality;
     String? doctorAddress = doctorModel.doctorAddress;
     String? email = doctorModel.email;
+
     String date = '${selectedDate.day}-${selectedDate.month}-${selectedDate.year}';
     String appointmentTime = chooseTime;
 
@@ -136,8 +138,11 @@ class BookAppointmentController extends GetxController {
       doctorDate: date,
       email: email,
       doctorTime: appointmentTime,
-      status: "Upcoming",
+      status: "Disapproved",
       doctorUid: doctorModel.uid,
+      userEmail: dashboardController.userModel?.email,
+      userName: dashboardController.userModel?.fullname,
+      userProfilePic: dashboardController.userModel?.profilepic,
     );
 
     // Nullify the parameters after they are used
