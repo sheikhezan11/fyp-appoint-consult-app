@@ -49,7 +49,7 @@ class ProfileBottom extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(10.0),
             child:
-                profileMethod(Icons.notifications_outlined, "Notifiications"),
+                profileMethod(Icons.notifications_outlined, "Notifications"),
           ),
           Padding(
             padding: const EdgeInsets.all(10.0),

@@ -1,15 +1,19 @@
 import 'dart:async';
 
+import 'package:MedEase/viewmodel/controller/dr_dashboard/dr_dashboard_controller.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
+
 import '../../../model/bookappointment_model.dart';
 import '../../../utils/doctors.dart';
 import '../dashboard/dashboard_controller.dart';
 
-class CheckAppointmentController extends GetxController {
+class DrAppointmentController extends GetxController{
+  late String uid;
   final DashboardController controller = Get.find<DashboardController>();
+  final DrDashboardController drDashboardController = Get.find<DrDashboardController>();
   var appointments = <BookAppointmentModel>[].obs;
   var upcomingAppointments = <BookAppointmentModel>[].obs;
   var completedAppointments = <BookAppointmentModel>[].obs;
@@ -36,6 +40,8 @@ class CheckAppointmentController extends GetxController {
   late Timer? _timer;
   @override
   void onInit() {
+    print("Check kr raha id: ${drDashboardController.doctorUid}");
+    uid=Get.arguments!=null?Get.arguments["uid"]:"";
     super.onInit();
     fetchAppointments();
     getDoctorIds();
@@ -66,7 +72,7 @@ class CheckAppointmentController extends GetxController {
       CollectionReference appointmentsRef =
           FirebaseFirestore.instance.collection('bookAppointment');
       QuerySnapshot querySnapshot =
-          await appointmentsRef.where('uid', isEqualTo: controller.id).get();
+          await appointmentsRef.where('doctorUid', isEqualTo: drDashboardController.doctorUid).get();
 
       var allAppointments = querySnapshot.docs.map((doc) {
         return BookAppointmentModel.fromMap(doc.data() as Map<String, dynamic>);
@@ -139,7 +145,7 @@ class CheckAppointmentController extends GetxController {
     }
   }
 
- Future<void> cancelAppointmentsForDoctorAndDate(String doctorUid, String appointmentDate) async {
+ Future<void> cancelAppointmentsForDoctorAndDate(String doctorUid, String appointmentDate, String type) async {
   try {
     QuerySnapshot querySnapshot = await FirebaseFirestore.instance
         .collection('bookAppointment')
@@ -148,7 +154,7 @@ class CheckAppointmentController extends GetxController {
         .get();
 
     for (var doc in querySnapshot.docs) {
-      await doc.reference.update({'status': 'Cancelled'});
+      await doc.reference.update({'status': type});
     }
 
     if (kDebugMode) {

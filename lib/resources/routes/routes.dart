@@ -1,8 +1,10 @@
 import 'package:MedEase/resources/routes/pages.dart';
 import 'package:MedEase/view/chatroom/chatroom_view.dart';
+import 'package:MedEase/view/dr_appointment/dr_appointment.dart';
 import 'package:MedEase/view/dr_dashboard/dr_dashboard_view.dart';
 import 'package:MedEase/view/voice_messenger/voice_messenger.dart';
 import 'package:MedEase/viewmodel/binding/chat_screen/chat_screen_binding.dart';
+import 'package:MedEase/viewmodel/binding/dr_appointment/dr_appointment_binding.dart';
 import 'package:MedEase/viewmodel/binding/dr_dashboard/dr_dashboard_binding.dart';
 import 'package:MedEase/viewmodel/binding/voice_messenger/voice_messenger_binding.dart';
 import 'package:flutter/widgets.dart';
@@ -152,8 +154,8 @@ class Pages {
           page: () => const VideoCallPage(),
           binding: VideoMessengerBinding(),
           transition: _routeTransition,
-        ); 
-        case Routes.voicePage:
+        );
+      case Routes.voicePage:
         return GetPageRoute(
           settings: settings,
           page: () => const VoiceCallPage(),
@@ -174,12 +176,19 @@ class Pages {
           page: () => const ChatScreen(),
           binding: ChatScreenBinding(),
           transition: _routeTransition,
-        );  
-        case Routes.drDashboard:
+        );
+      case Routes.drDashboard:
         return GetPageRoute(
           settings: settings,
           page: () => const DrDashboardView(),
           binding: DrDashboardBinding(),
+          transition: _routeTransition,
+        );
+      case Routes.drAppointmentCheck:
+        return GetPageRoute(
+          settings: settings,
+          page: () => const DrAppointment(),
+          binding: DrAppointmentBinding(),
           transition: _routeTransition,
         );
       default:

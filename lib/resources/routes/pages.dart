@@ -19,5 +19,6 @@ class Routes {
   static const String location= '/location';
   static const String chatRoom= '/chatRoom';
   static const String drDashboard= '/dr_Dashboard';
+  static const String drAppointmentCheck= '/dr_Appointment';
 
 }

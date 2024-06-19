@@ -1,23 +1,28 @@
+// ignore_for_file: unused_local_variable
+
+import 'package:MedEase/viewmodel/controller/dashboard/dashboard_controller.dart';
+import 'package:MedEase/viewmodel/controller/dr_appointment/dr_appointment_controller.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../model/bookappointment_model.dart';
 import '../../resources/routes/pages.dart';
 import '../../utils/custom_button.dart';
 import '../../viewmodel/controller/check_appointment/check_appointment_controller.dart';
 
-class CheckAppointments extends StatelessWidget {
-  const CheckAppointments({super.key});
+class DrAppointment extends GetView<DrAppointmentController> {
+  const DrAppointment({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // ignore: unused_local_variable
-    final CheckAppointmentController controller =
-        Get.put(CheckAppointmentController());
-
+    final DashboardController dashboardController =
+        Get.put(DashboardController());
+    final DrAppointmentController controller =
+        Get.put(DrAppointmentController());
     return GetBuilder(
-        init: CheckAppointmentController(),
+        init: DrAppointmentController(),
         builder: (controller) {
           return DefaultTabController(
             length: 3,
@@ -51,7 +56,7 @@ class CheckAppointments extends StatelessWidget {
   }
 
   Widget buildAppointmentList(List<BookAppointmentModel> appointments,
-      CheckAppointmentController controller) {
+      DrAppointmentController controller) {
     if (appointments.isEmpty) {
       return const Center(child: Text('No appointments'));
     }
@@ -59,7 +64,6 @@ class CheckAppointments extends StatelessWidget {
       itemCount: appointments.length,
       itemBuilder: (context, index) {
         bool isUpcoming = appointments[index].status == "Upcoming";
-        // ignore: unused_local_variable
         bool isCancelled = appointments[index].status == "Cancelled";
 
         return Container(
@@ -116,7 +120,7 @@ class CheckAppointments extends StatelessWidget {
                         color: Colors.grey,
                         image: DecorationImage(
                           image: NetworkImage(
-                              appointments[index].profilePic.toString()),
+                              appointments[index].userProfilePic.toString()),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -125,9 +129,9 @@ class CheckAppointments extends StatelessWidget {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(appointments[index].doctorName ?? ""),
-                        Text(appointments[index].doctorSpeciality ?? ""),
-                        Text(appointments[index].doctorAddress ?? ""),
+                        Text(appointments[index].userName ?? ""),
+                        Text(appointments[index].userEmail ?? ""),
+                        // Text(appointments[index].doctorAddress ?? ""),
                       ],
                     ),
                   ],
@@ -154,7 +158,7 @@ class CheckAppointments extends StatelessWidget {
                       onTap: () {
                         Get.toNamed(Routes.videoPage, arguments: {
                           "callId": appointments[index].documentId,
-                          "userName": appointments[index].userName
+                          "userName": appointments[index].doctorName
                         });
                       },
                       child: Container(
@@ -174,7 +178,7 @@ class CheckAppointments extends StatelessWidget {
                       onTap: () {
                         Get.toNamed(Routes.voicePage, arguments: {
                           "callId": appointments[index].documentId,
-                          "userName": appointments[index].userName
+                          "userName": appointments[index].doctorName
                         });
                       },
                       child: Container(
@@ -233,7 +237,7 @@ class CheckAppointments extends StatelessWidget {
                               appointments[index].doctorDate ??
                                   ""; // Replace with actual appointment date
                           await controller.cancelAppointmentsForDoctorAndDate(
-                              doctorUid, appointmentDate);
+                              doctorUid, appointmentDate, 'Cancelled');
                         },
                         child: Container(
                           width: 140,
@@ -251,26 +255,13 @@ class CheckAppointments extends StatelessWidget {
                     if (isUpcoming)
                       GestureDetector(
                         onTap: () async {
-                          String? doctorUID = appointments[index].doctorUid;
-                          if (doctorUID != null) {
-                            await controller
-                                .getDoctorWorkingTimes({'id': doctorUID});
-                            if (kDebugMode) {
-                              print("TEST: ${appointments[index].documentId}");
-                            }
-                            showModalBottomSheet(
-                              // ignore: use_build_context_synchronously
-                              context: context,
-                              builder: (context) => RescheduleBottomSheet(
-                                id: appointments[index].documentId ?? "",
-                                time: appointments[index].doctorDate ?? "",
-                              ),
-                            );
-                          } else {
-                            if (kDebugMode) {
-                              print('Error: doctorUID is null');
-                            }
-                          }
+                          String doctorUid = appointments[index].doctorUid ??
+                              ""; // Replace with actual doctor UID
+                          String appointmentDate =
+                              appointments[index].doctorDate ??
+                                  ""; // Replace with actual appointment date
+                          await controller.cancelAppointmentsForDoctorAndDate(
+                              doctorUid, appointmentDate, 'Completed');
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -281,7 +272,7 @@ class CheckAppointments extends StatelessWidget {
                           height: 40,
                           child: const Center(
                             child: Text(
-                              "Reschedule",
+                              "Completed",
                               style:
                                   TextStyle(fontSize: 16, color: Colors.white),
                             ),

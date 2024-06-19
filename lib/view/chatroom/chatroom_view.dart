@@ -1,9 +1,11 @@
-import 'package:MedEase/model/chat_model.dart';
-import 'package:MedEase/viewmodel/controller/chat_screen/chat_screen_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../viewmodel/controller/dashboard/dashboard_controller.dart';
+import 'package:intl/intl.dart';
+import 'package:MedEase/viewmodel/controller/dashboard/dashboard_controller.dart';
+
+import '../../model/chat_model.dart';
+import '../../viewmodel/controller/chat_screen/chat_screen_controller.dart';
 
 class ChatScreen extends GetView<ChatScreenController> {
   const ChatScreen({
@@ -14,6 +16,7 @@ class ChatScreen extends GetView<ChatScreenController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         title: const Text('Chat'),
       ),
       body: Column(
@@ -22,7 +25,8 @@ class ChatScreen extends GetView<ChatScreenController> {
             child: StreamBuilder<QuerySnapshot>(
               stream: FirebaseFirestore.instance
                   .collection('chats')
-                  .doc(controller.appointmentId)
+                  .doc(generateChatId(
+                      controller.doctorUid, controller.patientUid))
                   .collection('messages')
                   .orderBy('timestamp')
                   .snapshots(),
@@ -39,11 +43,53 @@ class ChatScreen extends GetView<ChatScreenController> {
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     var message = messages[index];
-                    return ListTile(
-                      title: Text(message.message),
-                      subtitle: Text(message.senderUid == controller.doctorUid
-                          ? 'Doctor'
-                          : 'Patient'),
+                    DateTime dateTime = message.timestamp.toDate();
+                    String formattedTime =
+                        DateFormat('hh:mm a').format(dateTime);
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8.0,
+                        horizontal: 16.0,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: message.senderUid ==
+                                Get.find<DashboardController>().id
+                            ? MainAxisAlignment.end
+                            : MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: message.senderUid ==
+                                      Get.find<DashboardController>().id
+                                  ? Colors.blue
+                                  : Colors.grey,
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                            padding: const EdgeInsets.all(12.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  message.message,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  formattedTime,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     );
                   },
                 );
@@ -88,20 +134,29 @@ class ChatScreen extends GetView<ChatScreenController> {
     );
   }
 
-  Future<void> sendMessage(String message) async {
-    ChatMessageModel chatMessage = ChatMessageModel(
-      senderUid: Get.find<DashboardController>().id,
-      receiverUid: controller.doctorUid == Get.find<DashboardController>().id
-          ? controller.patientUid
-          : controller.doctorUid,
-      message: message,
-      timestamp: Timestamp.now(),
-    );
+ Future<void> sendMessage(String message) async {
+  String chatId = generateChatId(controller.doctorUid, controller.patientUid);
 
-    await FirebaseFirestore.instance
-        .collection('chats')
-        .doc(controller.appointmentId)
-        .collection('messages')
-        .add(chatMessage.toMap());
-  }
+  ChatMessageModel chatMessage = ChatMessageModel(
+    senderUid: Get.find<DashboardController>().id,
+    receiverUid: controller.doctorUid == Get.find<DashboardController>().id
+        ? controller.patientUid
+        : controller.doctorUid,
+    message: message,
+    timestamp: Timestamp.now(),
+  );
+
+  await FirebaseFirestore.instance
+      .collection('chats')
+      .doc(chatId)
+      .collection('messages')
+      .add(chatMessage.toMap());
+}
+
+String generateChatId(String uid1, String uid2) {
+  List<String> uids = [uid1, uid2];
+  uids.sort(); // Ensure consistent order to create the same chatId for any user combination
+  return "${uids[0]}_${uids[1]}";
+}
+
 }
